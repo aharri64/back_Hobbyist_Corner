@@ -13,7 +13,7 @@ const commentSchema = new Schema({
     },
     refUserName: {
         type: String,
-        ref: user_id,
+        ref: 'user_id',
     }
     
 });
