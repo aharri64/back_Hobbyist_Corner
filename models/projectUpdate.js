@@ -23,6 +23,6 @@ const projectUpdateSchema = new Schema({
     }
 });
 
-const projectUpdate = mongoose.model('ProjectUpdate', projectUpdateSchema);
+const ProjectUpdate = mongoose.model('ProjectUpdate', projectUpdateSchema);
 
-module.exports = projectUpdate;
+module.exports = ProjectUpdate;

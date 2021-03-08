@@ -13,11 +13,11 @@ const commentSchema = new Schema({
     },
     refUserName: {
         type: String,
-        ref: user_id,
+        ref: 'user_id',
     }
     
 });
 
-const comment = mongoose.model('Comment', commentSchema);
+const Comment = mongoose.model('Comment', commentSchema);
 
-module.exports = commentSchema;
+module.exports = Comment;
