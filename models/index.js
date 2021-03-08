@@ -17,4 +17,7 @@ module.exports = {
     Example: require('./example'),
     User: require('./user'),
     Message: require('./message'),
+    Project: require('./project'),
+    ProjectUpdate: require('./projectUpdate'),
+    Comment: require('./comment'),
 };
