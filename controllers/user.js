@@ -82,6 +82,7 @@ const login = async (req, res) => {
                 const legit = jwt.verify(token, JWT_SECRET, { expiresIn: 60 });
                 console.log('===> legit');
                 console.log(legit);
+                console.log(token) //! DELETE LATER!!!
                 res.json({ success: true, token: `Bearer ${token}`, userData: legit });
             });
 
