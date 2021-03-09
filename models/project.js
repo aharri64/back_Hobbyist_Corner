@@ -1,6 +1,44 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
+const commentSchema = new Schema({
+    content: {
+        type: String,
+        required: true,
+        minlength: 3,
+    },
+    date: {
+        type: Date,
+        default: Date.now()
+    },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User", 
+        required: true
+    }
+    
+});
+
+const projectUpdateSchema = new Schema({
+    projectUpdateName: {
+        type: String,
+        required: true,
+        minlength: 3,
+    },
+    descriptionUpdate: {
+        type: String,
+    },
+    imageUpdate: {
+        type: String,
+    },
+    date: {
+        type: Date,
+        default: Date.now()
+    },
+    comments: [commentSchema],
+    
+});
+
 const projectSchema = new Schema({
     projectName: {
         type: String,
@@ -20,14 +58,12 @@ const projectSchema = new Schema({
     category: {
         type: String,
     },
-    refUser: {
-        type: String,
-        ref: 'user_id',
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User", 
+        required: true
     },
-    update: {
-        type: String,
-        ref: 'project_id',
-    }
+    updates: [projectUpdateSchema]
 });
 
 const Project = mongoose.model('Project', projectSchema);

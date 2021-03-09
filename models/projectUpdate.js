@@ -1,28 +1,42 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+// const mongoose = require('mongoose');
+// const { Schema } = mongoose;
 
-const projectUpdateSchema = new Schema({
-    projectUpdateName: {
-        type: String,
-        required: true,
-        minlength: 3,
-    },
-    descriptionUpdate: {
-        type: String,
-    },
-    imageUpdate: {
-        type: String,
-    },
-    date: {
-        type: Date,
-        default: Date.now()
-    },
-    comment: {
-        type: String,
-        ref: 'comment_id'
-    }
-});
+// const commentSchema = new Schema({
+//     content: {
+//         type: String,
+//         required: true,
+//         minlength: 3,
+//     },
+//     date: {
+//         type: Date,
+//         default: Date.now()
+//     },
+//     refUserName: {
+//         type: String,
+//         ref: 'user_id',
+//     }
+    
+// });
 
-const ProjectUpdate = mongoose.model('ProjectUpdate', projectUpdateSchema);
+// const projectUpdateSchema = new Schema({
+//     projectUpdateName: {
+//         type: String,
+//         required: true,
+//         minlength: 3,
+//     },
+//     descriptionUpdate: {
+//         type: String,
+//     },
+//     imageUpdate: {
+//         type: String,
+//     },
+//     date: {
+//         type: Date,
+//         default: Date.now()
+//     },
+//     comments: [commentSchema]
+// });
 
-module.exports = ProjectUpdate;
+// const ProjectUpdate = mongoose.model('ProjectUpdate', projectUpdateSchema);
+
+// module.exports = ProjectUpdate;
