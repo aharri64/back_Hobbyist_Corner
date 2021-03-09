@@ -94,14 +94,14 @@ const login = async (req, res) => {
 }
 
 // private
-const profile = (req, res) => {
-    console.log('====> inside /profile');
-    console.log(req.body);
-    console.log('====> user')
-    console.log(req.user);
-    const { id, name, email } = req.user; // object with user object inside
-    res.json({ id, name, email });
-}
+// const profile = (req, res) => {
+//     console.log('====> inside /profile');
+//     console.log(req.body);
+//     console.log('====> user')
+//     console.log(req.user);
+//     const { id, name, email } = req.user; // object with user object inside
+//     res.json({ id, name, email });
+// }
 
 const messages = async (req, res) => {
     console.log('====> inside /messages');
@@ -119,6 +119,6 @@ module.exports = {
     test,
     register,
     login,
-    profile,
+    // profile,
     messages,
 }
