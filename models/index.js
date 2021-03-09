@@ -18,6 +18,6 @@ module.exports = {
     User: require('./user'),
     Message: require('./message'),
     Project: require('./project'),
-    // ProjectUpdate: require('./projectUpdate'),
+    Profile: require('./profile'),
     // Comment: require('./comment'),
 };

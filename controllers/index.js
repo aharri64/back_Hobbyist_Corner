@@ -4,5 +4,5 @@ module.exports = {
   message: require('./message'),
   comment: require('./comment'),
   project: require('./project'),
-  projectUpdate: require('./projectUpdate'),
+  profile: require('./profile'),
 }
