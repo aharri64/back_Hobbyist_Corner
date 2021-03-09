@@ -13,8 +13,9 @@ const profile = async (req, res) => {
     console.log(req.body);
     console.log('====> user')
     console.log(req.user);
-    const { id, name, email } = req.user; // object with user object inside
-    res.json({ id, name, email });
+    // const { id, name, email } = req.user; // object with user object inside
+    // res.json({ id, name, email });
+    res.json(userProfile);
 }
 
 // const create = (req, res) => {
