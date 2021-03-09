@@ -15,10 +15,6 @@ const profileSchema = new Schema({
     location: {
         type: String
     },
-    status: {
-        type: String,
-        required: true
-    },
     skills: {
         type: [String],
         required: true
