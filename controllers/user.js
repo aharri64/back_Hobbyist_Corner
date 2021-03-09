@@ -94,6 +94,67 @@ const login = async (req, res) => {
     }
 }
 
+const profile = async (req, res) => {
+    const profile = await db.Profile.findOne({ User: req.user.id }).populate('user', ['name', 'email']);
+    if (!profile) {
+        return res.status(400).json({ message: 'There is no profile for this user'})
+    }
+    console.log('====> inside /profile');
+    console.log(req.body);
+    console.log('====> user')
+    console.log(req.user);
+
+    res.json(profile)
+
+
+}
+
+const profilePost = async (req, res) => {
+    const { company, website, location, skills, bio, youtube, facebook, twitter, linkedin, instagram } = req.body;
+    const profileFields = {};
+    profileFields.user = req.user.id;
+    if (company) profileFields.company = company;
+    if (website) profileFields.website = website;
+    if (location) profileFields.location = location;
+    if (bio) profileFields.bio = bio;
+    if (skills) {
+        profileFields.skills = skills.split(',').map(skill => skill.trim());
+    }
+
+    console.log(profileFields.skills);
+    // build social object
+    profileFields.social = {};
+    if (youtube) profileFields.social.youtube = youtube;
+    if (facebook) profileFields.social.facebook = facebook;
+    if (twitter) profileFields.social.twitter = twitter;
+    if (linkedin) profileFields.social.linkedin = linkedin;
+    if (instagram) profileFields.social.instagram = instagram;
+    try {
+        let profile = await db.Profile.findOne({ User: req.user.id })
+
+        if (profile) {
+            //Update
+            profile = await db.Profile.findOneAndUpdate(
+                { User: req.user.id }, 
+                { $set: profileFields }, 
+                { new: true } 
+            );
+            return res.json(profile)
+        }
+        //create
+        profile = new db.Profile(profileFields)
+
+        await profile.save();
+        res.json(profile);
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Server error')
+    }
+
+
+}
+
 // private
 // const profile = (req, res) => {
 //     console.log('====> inside /profile');
@@ -120,6 +181,7 @@ module.exports = {
     test,
     register,
     login,
-    // profile,
+    profile,
+    profilePost,
     messages,
 }
