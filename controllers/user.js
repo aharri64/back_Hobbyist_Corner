@@ -82,7 +82,6 @@ const login = async (req, res) => {
                 const legit = jwt.verify(token, JWT_SECRET, { expiresIn: 60 });
                 console.log('===> legit');
                 console.log(legit);
-                console.log(token) //! DELETE LATER!!!
                 res.json({ success: true, token: `Bearer ${token}`, userData: legit });
             });
 
@@ -95,17 +94,29 @@ const login = async (req, res) => {
 }
 
 const profile = async (req, res) => {
-    const profile = await db.Profile.findOne({ User: req.user.id }).populate('user', ['name', 'email']);
-    if (!profile) {
-        return res.status(400).json({ message: 'There is no profile for this user'})
+    try {
+        
+        const profile = await db.Profile.findOne({ 
+            user: req.user.id 
+        }).populate('user', ['name']);
+        console.log(req.user.id);
+        console.log(profile);
+        
+        if (!profile) {
+            return res.status(400).json({ message: 'There is no profile for this user'})
+        } else {
+
+            console.log('====> inside /profile');
+            console.log(req.body);
+            console.log('====> user')
+            console.log(req.user);
+            res.json(profile)
+        }
+        
+    } catch (error) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
     }
-    console.log('====> inside /profile');
-    console.log(req.body);
-    console.log('====> user')
-    console.log(req.user);
-
-    res.json(profile)
-
 
 }
 
