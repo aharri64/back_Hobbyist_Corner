@@ -8,6 +8,8 @@ router.post('/login', ctrl.user.login);
 router.get('/profile', passport.authenticate('jwt', { session: false }), ctrl.user.profile); // session: false ???
 router.post('/profile', passport.authenticate('jwt', { session: false }), ctrl.user.profilePost); // session: false ???
 router.get('/messages', passport.authenticate('jwt', { session: false }), ctrl.user.messages); // session: false ???
+router.get('/allprofiles', ctrl.user.allProfiles);
+
 
 
 module.exports = router;
