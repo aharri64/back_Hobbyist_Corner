@@ -13,7 +13,17 @@ const test = (req, res) => {
     res.json({ message: 'User endpoint OK! ✅' });
 }
 
+/* 
+* table of contents ======================================>
+    * register - line 
+    * login - line 
+    * get profile - line 
+    * Post on Profile - line
+    * Get all Profiles - line
+*/
 
+
+// * register ======================================>
 const register = (req, res) => {
     // POST - adding the new user to the database
     console.log('===> Inside of /register');
@@ -52,6 +62,7 @@ const register = (req, res) => {
     .catch(err => console.log('Error finding user', err))
 }
 
+// * login ======================================>
 const login = async (req, res) => {
     // POST - finding a user and returning the user
     console.log('===> Inside of /login');
@@ -93,6 +104,7 @@ const login = async (req, res) => {
     }
 }
 
+// * get the users profile ======================================>
 const profile = async (req, res) => {
     try {
         
@@ -120,6 +132,7 @@ const profile = async (req, res) => {
 
 }
 
+// * Post to a profile ======================================>
 const profilePost = async (req, res) => {
     const { company, website, location, skills, bio, youtube, facebook, twitter, linkedin, instagram } = req.body;
     const profileFields = {};
@@ -166,15 +179,19 @@ const profilePost = async (req, res) => {
 
 }
 
-// private
-// const profile = (req, res) => {
-//     console.log('====> inside /profile');
-//     console.log(req.body);
-//     console.log('====> user')
-//     console.log(req.user);
-//     const { id, name, email } = req.user; // object with user object inside
-//     res.json({ id, name, email });
-// }
+// * Get all profiles ======================================>
+const allProfiles = async (req, res) => {
+    try {
+        const allProfiles = await db.Profile.find().populate('user',  ['name']);
+        res.json(allProfiles);
+        
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error')
+    }
+}
+
+
 
 const messages = async (req, res) => {
     console.log('====> inside /messages');
@@ -187,6 +204,8 @@ const messages = async (req, res) => {
     res.json({ id, name, email, message: messageArray, sameUser });
 }
 
+
+
 // Exports
 module.exports = {
     test,
@@ -194,5 +213,6 @@ module.exports = {
     login,
     profile,
     profilePost,
+    allProfiles,
     messages,
 }
