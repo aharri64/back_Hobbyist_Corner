@@ -20,6 +20,7 @@ const test = (req, res) => {
     * get profile - line 
     * Post on Profile - line
     * Get all Profiles - line
+    * Get Profile by user id - line
 */
 
 
@@ -184,14 +185,31 @@ const allProfiles = async (req, res) => {
     try {
         const allProfiles = await db.Profile.find().populate('user',  ['name']);
         res.json(allProfiles);
-        
+
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server error')
     }
 }
 
-
+// * get profile by user id =================================> 
+const profileById =  async (req, res) => {
+    try {
+        const profileById = await db.Profile.findOne({ 
+            user: req.params.user_id 
+        }).populate('user', ['name']);
+        if (!profile) {
+            return res.status(400).json({ message: 'There is no profile for this user'})
+        }
+        res.json(profileById);
+    } catch (err) {
+        console.error(err.message);
+        if (err.kind == 'ObjectId') {
+            return res.status(400).json({ message: 'Profile not found'})
+        }
+        res.status(500).send('Server error')
+    }
+}
 
 const messages = async (req, res) => {
     console.log('====> inside /messages');
@@ -214,5 +232,6 @@ module.exports = {
     profile,
     profilePost,
     allProfiles,
+    profileById,
     messages,
 }
