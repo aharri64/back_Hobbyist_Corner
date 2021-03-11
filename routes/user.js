@@ -10,6 +10,9 @@ router.post('/profile', passport.authenticate('jwt', { session: false }), ctrl.u
 router.get('/messages', passport.authenticate('jwt', { session: false }), ctrl.user.messages); // session: false ???
 router.get('/allprofiles', ctrl.user.allProfiles);
 router.get('/profile/:user_id', ctrl.user.profileById);
+router.delete('/profile', passport.authenticate('jwt', { session: false }), ctrl.user.deleteProfile);
+
+
 
 
 

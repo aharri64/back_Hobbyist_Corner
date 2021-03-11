@@ -15,12 +15,13 @@ const test = (req, res) => {
 
 /* 
 * table of contents ======================================>
-    * register - line 
-    * login - line 
-    * get profile - line 
-    * Post on Profile - line
-    * Get all Profiles - line
-    * Get Profile by user id - line
+    * register - line - public
+    * login - line - public
+    * get profile - line - private
+    * Post on Profile - line - private
+    * Get all Profiles - line - public
+    * Get Profile by user id - line - public
+    * Delete user - line - private
 */
 
 
@@ -221,6 +222,22 @@ const profileById =  async (req, res) => {
     }
 }
 
+// * Delete Profile & User=======================================>
+const deleteProfile = async (req, res) => {
+    try {
+        //TODO - remove users posts
+        //! remove profile
+        await db.Profile.findOneAndRemove ({ user: req.user.id });
+        //! remove User
+        await db.User.findOneAndRemove ({ _id: req.user.id });
+        res.json({ message: 'User deleted' })
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error')
+    }
+}
+
+
 const messages = async (req, res) => {
     console.log('====> inside /messages');
     console.log(req.body);
@@ -243,5 +260,6 @@ module.exports = {
     profilePost,
     allProfiles,
     profileById,
+    deleteProfile,
     messages,
 }
