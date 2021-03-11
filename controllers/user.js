@@ -7,6 +7,7 @@ const { JWT_SECRET } = process.env;
 
 // Database
 const db = require('../models');
+const { post } = require('../routes');
 
 // Controllers
 const test = (req, res) => {
@@ -307,7 +308,7 @@ const deletePost = async (req, res) => {
             return res.status(401).json({ message: 'User not Authorized'})
         }
 
-        await db.Post.deleteOne()
+        await posts.remove();
 
         res.json({ message: 'post removed successfully' });
     } catch (err) {
@@ -409,9 +410,11 @@ const deleteComment = async (req, res) => {
             return res.status(404).json({message: 'user not authorized'});
         }
 
-        const removeIndex = post.comments.map(comment => comment.user.toString()).indexOf(req.user.id);
+        post.comments = post.comments.filter( ({ id }) => id !== req.params.comment_id);
 
-        post.comments.splice(removeIndex, 1);
+        // const removeIndex = post.comments.map(comment => comment.user.toString()).indexOf(req.user.id);
+
+        // post.comments.splice(removeIndex, 1);
 
         await post.save();
 
