@@ -293,6 +293,32 @@ const postById = async (req, res) => {
     }
 }
 
+// * Delete Post ===============================================================> 
+const deletePost = async (req, res) => {
+    try {
+        const posts = await db.Post.findById(req.params.id);
+
+        if(!posts) {
+            return res.status(404).json({ message: 'No post found'})
+        }
+
+        //Check User
+        if (posts.user.toString() !== req.user.id) {
+            return res.status(401).json({ message: 'User not Authorized'})
+        }
+
+        await db.Post.deleteOne()
+
+        res.json({ message: 'post removed successfully' });
+    } catch (err) {
+        console.error(err.message);
+        if (err.kind === 'ObjectId') {
+            return res.status(404).json({ message: 'No post found'})
+        }
+        res.status(500).send('Server error')
+    }
+}
+
 const messages = async (req, res) => {
     console.log('====> inside /messages');
     console.log(req.body);
@@ -319,5 +345,6 @@ module.exports = {
     newPost,
     posts,
     postById,
+    deletePost,
     messages,
 }

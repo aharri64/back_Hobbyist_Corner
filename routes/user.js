@@ -15,6 +15,8 @@ router.delete('/profile', passport.authenticate('jwt', { session: false }), ctrl
 router.post('/newpost', passport.authenticate('jwt', { session: false }), ctrl.user.newPost);
 router.get('/posts', passport.authenticate('jwt', { session: false }), ctrl.user.posts);
 router.get('/posts/:id', passport.authenticate('jwt', { session: false }), ctrl.user.postById);
+router.delete('/posts/:id', passport.authenticate('jwt', { session: false }), ctrl.user.deletePost);
+
 
 
 
