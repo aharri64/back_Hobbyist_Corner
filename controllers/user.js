@@ -293,6 +293,136 @@ const postById = async (req, res) => {
     }
 }
 
+// * Delete Post ===============================================================> 
+const deletePost = async (req, res) => {
+    try {
+        const posts = await db.Post.findById(req.params.id);
+
+        if(!posts) {
+            return res.status(404).json({ message: 'No post found'})
+        }
+
+        //Check User
+        if (posts.user.toString() !== req.user.id) {
+            return res.status(401).json({ message: 'User not Authorized'})
+        }
+
+        await db.Post.deleteOne()
+
+        res.json({ message: 'post removed successfully' });
+    } catch (err) {
+        console.error(err.message);
+        if (err.kind === 'ObjectId') {
+            return res.status(404).json({ message: 'No post found'})
+        }
+        res.status(500).send('Server error')
+    }
+}
+
+// * Like a post =======================================================>
+const postLike = async (req, res) => {
+    try {
+        const post = await db.Post.findById(req.params.id);
+
+        //check if post has already been liked
+        if (post.likes.filter(like => like.user.toString() === req.user.id).length > 0) {
+            return res.status(400).json({ message: 'Post already has a like'})
+        }
+
+        post.likes.unshift({ user: req.user.id });
+
+        await post.save();
+
+        res.json(post.likes)
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error')
+    }
+}
+
+// * Unlike a post =======================================================>
+const postUnlike = async (req, res) => {
+    try {
+        const post = await db.Post.findById(req.params.id);
+
+        //check if post has already been liked
+        if (post.likes.filter(like => like.user.toString() === req.user.id).length === 0) {
+            return res.status(400).json({ message: 'Post has not yet been liked'})
+        }
+
+        // get remove index
+        const removeIndex = post.likes.map(like => like.user.toString()).indexOf(req.user.id);
+
+        post.likes.splice(removeIndex, 1);
+
+        await post.save();
+
+        res.json(post.likes)
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error')
+    }
+}
+
+// * new Comment ===============================================================>
+const newComment = async (req, res) => {
+    try {
+        console.log('================================================> Hi!');
+        console.log(req.user);
+        const user = await db.User.findById(req.user._id).select('-password');
+        const post = await db.Post.findById(req.params.id)
+
+        const newComment = {
+            text: req.body.text,
+            name: user.name,
+            avatar: profile.avatar,
+            user: req.user.id
+        };
+        
+        post.comments.unshift(newComment);
+
+        await post.save();
+
+        res.json(post.comments);
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error')
+    }
+}
+
+// * Delete Comment ===============================================================>
+const deleteComment = async (req, res) => {
+    try {
+        const post = await db.Post.findById(req.params.id)
+
+        // pull comment from post
+        const comment = post.comments.find(comment => comment.id === req.params.comment_id);
+
+        //make sure comment exists
+        if (!comment) {
+            return res.status(404).json({message: 'comment does not exist'})
+        }
+
+        //Check if user is the user who made the comments
+        if (comment.user.toString() !== req.user.id) {
+            return res.status(404).json({message: 'user not authorized'});
+        }
+
+        const removeIndex = post.comments.map(comment => comment.user.toString()).indexOf(req.user.id);
+
+        post.comments.splice(removeIndex, 1);
+
+        await post.save();
+
+        res.json(post.comments)
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error')
+    }
+}
+
 const messages = async (req, res) => {
     console.log('====> inside /messages');
     console.log(req.body);
@@ -319,5 +449,10 @@ module.exports = {
     newPost,
     posts,
     postById,
+    deletePost,
+    postLike,
+    postUnlike,
+    newComment,
+    deleteComment,
     messages,
 }
