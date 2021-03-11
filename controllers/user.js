@@ -15,13 +15,13 @@ const test = (req, res) => {
 
 /* 
 * table of contents ======================================>
-    * register - line - public
-    * login - line - public
-    * get profile - line - private
-    * Post on Profile - line - private
-    * Get all Profiles - line - public
-    * Get Profile by user id - line - public
-    * Delete user - line - private
+    * register - line 28 - public
+    * login - line 67 - public
+    * get profile - line 118 - private
+    * Post on Profile - line 147 - private
+    * Get all Profiles - line 194 - public
+    * Get Profile by user id - line 206 - public
+    * Delete user - line 225 - private
 */
 
 
