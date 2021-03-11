@@ -77,6 +77,14 @@ const login = async (req, res) => {
         let isMatch = await bcrypt.compare(req.body.password, foundUser.password);
         console.log(isMatch);
         if (isMatch) {
+
+            const foundProfile = await db.Profile.findOne({
+                user: foundUser.id
+            })
+            
+            console.log("***********************")
+            console.log(foundProfile)
+            console.log(foundUser)
             // if user match, then we want to send a JSON Web Token
             // Create a token payload
             // add an expiredToken = Date.now()
@@ -84,7 +92,8 @@ const login = async (req, res) => {
             const payload = {
                 id: foundUser.id,
                 email: foundUser.email,
-                name: foundUser.name
+                name: foundUser.name,
+                profile: foundProfile
             }
 
             jwt.sign(payload, JWT_SECRET, { expiresIn: 3600 }, (err, token) => {
@@ -107,6 +116,7 @@ const login = async (req, res) => {
 
 // * get the users profile ======================================>
 const profile = async (req, res) => {
+
     try {
         
         const profile = await db.Profile.findOne({ 
