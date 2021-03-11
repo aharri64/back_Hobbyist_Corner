@@ -15,12 +15,13 @@ const test = (req, res) => {
 
 /* 
 * table of contents ======================================>
-    * register - line 
-    * login - line 
-    * get profile - line 
-    * Post on Profile - line
-    * Get all Profiles - line
-    * Get Profile by user id - line
+    * register - line - public
+    * login - line - public
+    * get profile - line - private
+    * Post on Profile - line - private
+    * Get all Profiles - line - public
+    * Get Profile by user id - line - public
+    * Delete user - line - private
 */
 
 
@@ -145,9 +146,10 @@ const profile = async (req, res) => {
 
 // * Post to a profile ======================================>
 const profilePost = async (req, res) => {
-    const { company, website, location, skills, bio, youtube, facebook, twitter, linkedin, instagram } = req.body;
+    const { avatar, company, website, location, skills, bio, youtube, facebook, twitter, linkedin, instagram } = req.body;
     const profileFields = {};
     profileFields.user = req.user.id;
+    if (avatar) profileFields.avatar = avatar;
     if (company) profileFields.company = company;
     if (website) profileFields.website = website;
     if (location) profileFields.location = location;
@@ -221,6 +223,45 @@ const profileById =  async (req, res) => {
     }
 }
 
+// * Delete Profile & User=======================================>
+const deleteProfile = async (req, res) => {
+    try {
+        //TODO - remove users posts
+        //! remove profile
+        await db.Profile.findOneAndRemove ({ user: req.user.id });
+        //! remove User
+        await db.User.findOneAndRemove ({ _id: req.user.id });
+        res.json({ message: 'User deleted' })
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error')
+    }
+}
+
+// * new Post ===============================================================>
+const newPost = async (req, res) => {
+    try {
+        console.log('================================================> Hi!');
+        console.log(req.user);
+        const user = await db.User.findById(req.user._id).select('-password');
+
+        const newPost = new db.Post ({
+            text: req.body.text,
+            name: user.name,
+            avatar: profile.avatar,
+            user: req.user.id
+        });
+        
+        const post = await newPost.save();
+
+        res.json(post);
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Server error')
+    }
+}
+
 const messages = async (req, res) => {
     console.log('====> inside /messages');
     console.log(req.body);
@@ -243,5 +284,7 @@ module.exports = {
     profilePost,
     allProfiles,
     profileById,
+    deleteProfile,
+    newPost,
     messages,
 }
