@@ -26,7 +26,7 @@ app.get('/api/', (req, res) => {
 app.use('/api/examples', routes.example);
 app.use('/api/users', routes.user);
 app.use('/api/messages', routes.message);
-app.use('/api/projects', routes.project);
+// app.use('/api/projects', routes.project);
 app.use('/api/posts', routes.post);
 
 

@@ -146,9 +146,10 @@ const profile = async (req, res) => {
 
 // * Post to a profile ======================================>
 const profilePost = async (req, res) => {
-    const { company, website, location, skills, bio, youtube, facebook, twitter, linkedin, instagram } = req.body;
+    const { avatar, company, website, location, skills, bio, youtube, facebook, twitter, linkedin, instagram } = req.body;
     const profileFields = {};
     profileFields.user = req.user.id;
+    if (avatar) profileFields.avatar = avatar;
     if (company) profileFields.company = company;
     if (website) profileFields.website = website;
     if (location) profileFields.location = location;
@@ -237,6 +238,29 @@ const deleteProfile = async (req, res) => {
     }
 }
 
+// * new Post ===============================================================>
+const newPost = async (req, res) => {
+    try {
+        console.log('================================================> Hi!');
+        console.log(req.user);
+        const user = await db.User.findById(req.user._id).select('-password');
+
+        const newPost = new db.Post ({
+            text: req.body.text,
+            name: user.name,
+            avatar: profile.avatar,
+            user: req.user.id
+        });
+        
+        const post = await newPost.save();
+
+        res.json(post);
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Server error')
+    }
+}
 
 const messages = async (req, res) => {
     console.log('====> inside /messages');
@@ -261,5 +285,6 @@ module.exports = {
     allProfiles,
     profileById,
     deleteProfile,
+    newPost,
     messages,
 }
