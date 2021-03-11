@@ -13,7 +13,8 @@ router.get('/profile/:user_id', ctrl.user.profileById);
 router.delete('/profile', passport.authenticate('jwt', { session: false }), ctrl.user.deleteProfile);
 //* posts
 router.post('/newpost', passport.authenticate('jwt', { session: false }), ctrl.user.newPost);
-
+router.get('/posts', passport.authenticate('jwt', { session: false }), ctrl.user.posts);
+router.get('/posts/:id', passport.authenticate('jwt', { session: false }), ctrl.user.postById);
 
 
 
