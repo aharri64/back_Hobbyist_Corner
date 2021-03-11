@@ -256,8 +256,39 @@ const newPost = async (req, res) => {
 
         res.json(post);
 
-    } catch (error) {
-        console.error(error.message);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error')
+    }
+}
+
+// * get Post ===============================================================> 
+const posts = async (req, res) => {
+    try {
+        const posts =await db.Post.find().sort({ date: -1 });
+        res.json(posts);
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error')
+    }
+}
+
+// * Get Post By Id ===============================================================> 
+const postById = async (req, res) => {
+    try {
+        const postById =await db.Post.findById(req.params.id);
+        if(!posts) {
+            return res.status(404).json({ message: 'No post found'})
+        }
+
+        res.json(postById);
+
+    } catch (err) {
+        console.error(err.message);
+        if(err.kind === 'ObjectId') {
+            return res.status(404).json({ message: 'No post found'})
+        }
         res.status(500).send('Server error')
     }
 }
@@ -286,5 +317,7 @@ module.exports = {
     profileById,
     deleteProfile,
     newPost,
+    posts,
+    postById,
     messages,
 }
