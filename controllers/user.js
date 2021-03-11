@@ -364,6 +364,33 @@ const postUnlike = async (req, res) => {
     }
 }
 
+// * new Comment ===============================================================>
+const newComment = async (req, res) => {
+    try {
+        console.log('================================================> Hi!');
+        console.log(req.user);
+        const user = await db.User.findById(req.user._id).select('-password');
+        const post = await db.Post.findById(req.params.id)
+
+        const newComment = {
+            text: req.body.text,
+            name: user.name,
+            avatar: profile.avatar,
+            user: req.user.id
+        };
+        
+        post.comments.unshift(newComment);
+
+        await post.save();
+
+        res.json(post.comments);
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error')
+    }
+}
+
 const messages = async (req, res) => {
     console.log('====> inside /messages');
     console.log(req.body);
@@ -393,5 +420,6 @@ module.exports = {
     deletePost,
     postLike,
     postUnlike,
+    newComment,
     messages,
 }
