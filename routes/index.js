@@ -3,8 +3,8 @@ module.exports = {
   user: require('./user'),
   message: require('./message'),
   comment: require('./comment'),
-  project: require('./project'), 
-  // profile: require('./profile'),
+  post: require('./post'),
+  // project: require('./project'), 
 }
 
 
