@@ -21,6 +21,7 @@ router.put('/posts/like/:id', passport.authenticate('jwt', { session: false }), 
 router.put('/posts/unlike/:id', passport.authenticate('jwt', { session: false }), ctrl.user.postUnlike); // ? unlike a post
 //* comments
 router.post('/posts/comment/:id', passport.authenticate('jwt', { session: false }), ctrl.user.newComment); // ? add a comment
+router.delete('/posts/comment/:id/:comment_id', passport.authenticate('jwt', { session: false }), ctrl.user.deleteComment); // ? delete a comment
 
 
 

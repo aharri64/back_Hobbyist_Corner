@@ -391,6 +391,38 @@ const newComment = async (req, res) => {
     }
 }
 
+// * Delete Comment ===============================================================>
+const deleteComment = async (req, res) => {
+    try {
+        const post = await db.Post.findById(req.params.id)
+
+        // pull comment from post
+        const comment = post.comments.find(comment => comment.id === req.params.comment_id);
+
+        //make sure comment exists
+        if (!comment) {
+            return res.status(404).json({message: 'comment does not exist'})
+        }
+
+        //Check if user is the user who made the comments
+        if (comment.user.toString() !== req.user.id) {
+            return res.status(404).json({message: 'user not authorized'});
+        }
+
+        const removeIndex = post.comments.map(comment => comment.user.toString()).indexOf(req.user.id);
+
+        post.comments.splice(removeIndex, 1);
+
+        await post.save();
+
+        res.json(post.comments)
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error')
+    }
+}
+
 const messages = async (req, res) => {
     console.log('====> inside /messages');
     console.log(req.body);
@@ -421,5 +453,6 @@ module.exports = {
     postLike,
     postUnlike,
     newComment,
+    deleteComment,
     messages,
 }
