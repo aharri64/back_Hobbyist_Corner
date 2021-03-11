@@ -319,6 +319,51 @@ const deletePost = async (req, res) => {
     }
 }
 
+// * Like a post =======================================================>
+const postLike = async (req, res) => {
+    try {
+        const post = await db.Post.findById(req.params.id);
+
+        //check if post has already been liked
+        if (post.likes.filter(like => like.user.toString() === req.user.id).length > 0) {
+            return res.status(400).json({ message: 'Post already has a like'})
+        }
+
+        post.likes.unshift({ user: req.user.id });
+
+        await post.save();
+
+        res.json(post.likes)
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error')
+    }
+}
+
+// * Unlike a post =======================================================>
+const postUnlike = async (req, res) => {
+    try {
+        const post = await db.Post.findById(req.params.id);
+
+        //check if post has already been liked
+        if (post.likes.filter(like => like.user.toString() === req.user.id).length === 0) {
+            return res.status(400).json({ message: 'Post has not yet been liked'})
+        }
+
+        // get remove index
+        const removeIndex = post.likes.map(like => like.user.toString()).indexOf(req.user.id);
+
+        post.likes.splice(removeIndex, 1);
+
+        await post.save();
+
+        res.json(post.likes)
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error')
+    }
+}
+
 const messages = async (req, res) => {
     console.log('====> inside /messages');
     console.log(req.body);
@@ -346,5 +391,7 @@ module.exports = {
     posts,
     postById,
     deletePost,
+    postLike,
+    postUnlike,
     messages,
 }

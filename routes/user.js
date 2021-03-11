@@ -16,6 +16,8 @@ router.post('/newpost', passport.authenticate('jwt', { session: false }), ctrl.u
 router.get('/posts', passport.authenticate('jwt', { session: false }), ctrl.user.posts);
 router.get('/posts/:id', passport.authenticate('jwt', { session: false }), ctrl.user.postById);
 router.delete('/posts/:id', passport.authenticate('jwt', { session: false }), ctrl.user.deletePost);
+router.put('/posts/like/:id', passport.authenticate('jwt', { session: false }), ctrl.user.postLike);
+router.put('/posts/unlike/:id', passport.authenticate('jwt', { session: false }), ctrl.user.postUnlike);
 
 
 
