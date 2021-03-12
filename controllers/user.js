@@ -4,8 +4,7 @@ const passport = require('passport');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env;
-const gravatar = require('gravatar')
-const normalize = require('normalize-url');
+
 // Database
 const db = require('../models');
 const { post } = require('../routes');
@@ -41,18 +40,10 @@ const register = (req, res) => {
             // send a 400 response
             return res.status(400).json({ message: 'Email already exists' });
         } else {
-
-            // ADD gravatar
-            const avatar = normalize(gravatar.url(req.body.email, {
-                s: '200', 
-                r: 'pg',
-                d: 'mm'
-            }), { forceHttps: true });
             // Create a new user
             const newUser = new db.User({
                 name: req.body.name,
                 email: req.body.email,
-                avatar: avatar,
                 password: req.body.password
             });
 
@@ -103,7 +94,6 @@ const login = async (req, res) => {
             const payload = {
                 id: foundUser.id,
                 email: foundUser.email,
-                avatar: foundUser.avatar,
                 name: foundUser.name,
                 profile: foundProfile
             }
@@ -133,7 +123,7 @@ const profile = async (req, res) => {
         
         const profile = await db.Profile.findOne({ 
             user: req.user.id 
-        }).populate('user', ['name', 'avatar']);
+        }).populate('user', ['name']);
         console.log(req.user.id);
         console.log(profile);
         
@@ -206,7 +196,7 @@ const profilePost = async (req, res) => {
 // * Get all profiles ======================================>
 const allProfiles = async (req, res) => {
     try {
-        const allProfiles = await db.Profile.find().populate('user',  ['name', 'avatar']);
+        const allProfiles = await db.Profile.find().populate('user',  ['name']);
         res.json(allProfiles);
 
     } catch (err) {
