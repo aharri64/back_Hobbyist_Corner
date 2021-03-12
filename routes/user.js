@@ -3,13 +3,6 @@ const ctrl = require('../controllers');
 const passport = require('passport');
 
 
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-})
-
-
 router.get('/test', passport.authenticate('jwt', { session: false }), ctrl.user.test);
 router.post('/register', ctrl.user.register);
 router.post('/login', ctrl.user.login);
@@ -30,17 +23,9 @@ router.put('/posts/unlike/:id', passport.authenticate('jwt', { session: false })
 //* comments
 router.post('/posts/comment/:id', passport.authenticate('jwt', { session: false }), ctrl.user.newComment); // ? add a comment
 router.delete('/posts/comment/:id/:comment_id', passport.authenticate('jwt', { session: false }), ctrl.user.deleteComment); // ? delete a comment
-router.post('/', multipartMiddleware, (req, res) => {
-    console.log('=====> Inside testing image');
-    console.log('=====> req.file');
-    console.log(req.file.path);
-    let body = req.body;
+router.post('/images', ctrl.user.cloudinary); // ? cloudinary images
 
-    cloudinary.uploader.upload(req.file.path, function(result) {
-        console.log('this is from cloudinary', result);
-        res.json({ url: result.secure_url })
-    })
-});
+
 
 
 

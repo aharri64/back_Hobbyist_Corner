@@ -4,6 +4,9 @@ const passport = require('passport');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env;
+const cloudinary = require('cloudinary');
+const multipartMiddleware = multipart();
+const multipart = require('connect-multipart');
 const gravatar = require('gravatar')
 const normalize = require('normalize-url');
 // Database
@@ -14,6 +17,12 @@ const { post } = require('../routes');
 const test = (req, res) => {
     res.json({ message: 'User endpoint OK! ✅' });
 }
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+})
 
 /* 
 * table of contents ======================================>
@@ -447,6 +456,18 @@ const messages = async (req, res) => {
     res.json({ id, name, email, message: messageArray, sameUser });
 }
 
+const cloudinary = async (multipartMiddleware, (req, res) => {
+    console.log('=====> Inside testing image');
+    console.log('=====> req.file');
+    console.log(req.file.path);
+    let body = req.body;
+
+    cloudinary.uploader.upload(req.file.path, function(result) {
+        console.log('this is from cloudinary', result);
+        res.json({ url: result.secure_url })
+    })
+})
+
 
 
 // Exports
@@ -467,5 +488,6 @@ module.exports = {
     postUnlike,
     newComment,
     deleteComment,
+    cloudinary,
     messages,
 }
