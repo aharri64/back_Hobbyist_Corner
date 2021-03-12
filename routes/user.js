@@ -23,7 +23,7 @@ router.put('/posts/unlike/:id', passport.authenticate('jwt', { session: false })
 //* comments
 router.post('/posts/comment/:id', passport.authenticate('jwt', { session: false }), ctrl.user.newComment); // ? add a comment
 router.delete('/posts/comment/:id/:comment_id', passport.authenticate('jwt', { session: false }), ctrl.user.deleteComment); // ? delete a comment
-router.post('/images', ctrl.user.cloudinary); // ? cloudinary images
+router.post('/images', ctrl.user.images); // ? cloudinary images
 
 
 

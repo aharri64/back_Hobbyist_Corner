@@ -5,8 +5,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env;
 const cloudinary = require('cloudinary');
+const multipart = require('connect-multiparty');
 const multipartMiddleware = multipart();
-const multipart = require('connect-multipart');
 const gravatar = require('gravatar')
 const normalize = require('normalize-url');
 // Database
@@ -456,7 +456,7 @@ const messages = async (req, res) => {
     res.json({ id, name, email, message: messageArray, sameUser });
 }
 
-const cloudinary = async (multipartMiddleware, (req, res) => {
+const images = (multipartMiddleware, (req, res) => {
     console.log('=====> Inside testing image');
     console.log('=====> req.file');
     console.log(req.file.path);
@@ -488,6 +488,6 @@ module.exports = {
     postUnlike,
     newComment,
     deleteComment,
-    cloudinary,
+    images,
     messages,
 }
