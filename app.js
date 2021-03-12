@@ -28,7 +28,7 @@ app.use('/api/users', routes.user);
 app.use('/api/messages', routes.message);
 // app.use('/api/projects', routes.project);
 app.use('/api/posts', routes.post);
-app.use('/api/imageAPI', routes.imageAPI);
+
 
 
 
