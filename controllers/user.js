@@ -9,9 +9,12 @@ const multipart = require('connect-multiparty');
 const multipartMiddleware = multipart();
 const gravatar = require('gravatar')
 const normalize = require('normalize-url');
+const mongoose = require('mongoose');
+const ObjectId = require('mongodb').ObjectId;
 // Database
 const db = require('../models');
 const { post } = require('../routes');
+
 
 // Controllers
 const test = (req, res) => {
@@ -65,6 +68,15 @@ const register = (req, res) => {
                 password: req.body.password
             });
 
+            const newProfile = new db.Profile({
+                bio: "",
+                location: "",
+                company: "",
+                skills: [],
+                website: "",
+                user: newUser
+            });
+
             // Salt and hash the password - before saving the user
             bcrypt.genSalt(10, (err, salt) => {
                 if (err) throw Error;
@@ -74,7 +86,10 @@ const register = (req, res) => {
                     // Change the password in newUser to the hash
                     newUser.password = hash;
                     newUser.save()
-                    .then(createdUser => res.json(createdUser))
+                    .then(createdUser => {
+                        newProfile.save();
+                        res.json(createdUser)
+                    })
                     .catch(err => console.log(err));
                 });
             });
@@ -117,11 +132,11 @@ const login = async (req, res) => {
                 profile: foundProfile
             }
 
-            jwt.sign(payload, JWT_SECRET, { expiresIn: 3600 }, (err, token) => {
+            jwt.sign(payload, JWT_SECRET, { expiresIn: 36000 }, (err, token) => {
                 if (err) {
                     res.status(400).json({ message: 'Session has endedd, please log in again'});
                 }
-                const legit = jwt.verify(token, JWT_SECRET, { expiresIn: 60 });
+                const legit = jwt.verify(token, JWT_SECRET, { expiresIn: 6000 });
                 console.log('===> legit');
                 console.log(legit);
                 res.json({ success: true, token: `Bearer ${token}`, userData: legit });
@@ -137,7 +152,10 @@ const login = async (req, res) => {
 
 // * get the users profile ======================================>
 const profile = async (req, res) => {
-
+    console.log("********************")
+    console.log("********************")
+    console.log("this is the profile endpoint")
+    console.log("********************")
     try {
         
         const profile = await db.Profile.findOne({ 
@@ -166,9 +184,9 @@ const profile = async (req, res) => {
 
 // * Post to a profile ======================================>
 const profilePost = async (req, res) => {
-    const { avatar, company, website, location, skills, bio, youtube, facebook, twitter, linkedin, instagram } = req.body;
-    const profileFields = {};
-    profileFields.user = req.user.id;
+    const { avatar, company, website, location, skills, bio, youtube, facebook, twitter, linkedin, instagram, id } = req.body;
+    let profileFields = {};
+    profileFields.user = mongoose.Types.ObjectId(id);
     if (avatar) profileFields.avatar = avatar;
     if (company) profileFields.company = company;
     if (website) profileFields.website = website;
@@ -178,7 +196,7 @@ const profilePost = async (req, res) => {
         profileFields.skills = skills.split(',').map(skill => skill.trim());
     }
 
-    console.log(profileFields.skills);
+    
     // build social object
     profileFields.social = {};
     if (youtube) profileFields.social.youtube = youtube;
@@ -186,23 +204,22 @@ const profilePost = async (req, res) => {
     if (twitter) profileFields.social.twitter = twitter;
     if (linkedin) profileFields.social.linkedin = linkedin;
     if (instagram) profileFields.social.instagram = instagram;
+    console.log(profileFields)
     try {
-        let profile = await db.Profile.findOne({ User: req.user.id })
-
-        if (profile) {
             //Update
-            profile = await db.Profile.findOneAndUpdate(
-                { User: req.user.id }, 
-                { $set: profileFields }, 
-                { new: true } 
-            );
-            return res.json(profile)
-        }
+        const userProfile = await db.Profile.findOneAndUpdate(
+            { user: ObjectId(id) }, 
+            { $set: profileFields }, 
+            { new: true } 
+        );
+        console.log(userProfile)
+        await userProfile.save();
+        return res.json(userProfile)
         //create
-        profile = new db.Profile(profileFields)
+        // profile = new db.Profile(profileFields)
 
-        await profile.save();
-        res.json(profile);
+        // await profile.save();
+        // res.json(profile);
 
     } catch (error) {
         console.error(error.message);
@@ -227,9 +244,11 @@ const allProfiles = async (req, res) => {
 // * get profile by user id =================================> 
 const profileById =  async (req, res) => {
     try {
+        console.log("profile ID:")
+        console.log(req.params.user_id)
         const profileById = await db.Profile.findOne({ 
             user: req.params.user_id 
-        }).populate('user', ['name']);
+        }).populate('user', ['name', 'email']);
         if (!profile) {
             return res.status(400).json({ message: 'There is no profile for this user'})
         }
